@@ -6,7 +6,6 @@ class AgentModel {
   final String status;
   final String createdAt;
   final String updatedAt;
-  final String? deletedAt;
 
   AgentModel({
     required this.id,
@@ -16,7 +15,6 @@ class AgentModel {
     required this.status,
     required this.createdAt,
     required this.updatedAt,
-    this.deletedAt,
   });
 
   factory AgentModel.fromJson(Map<String, dynamic> json) {
@@ -28,12 +26,11 @@ class AgentModel {
       status: json['status'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
-      deletedAt: json['deleted_at'], // Optional field
     );
   }
 
   @override
   String toString() {
-    return 'ID: $id, Name: $name, Email: $email, Password: $password, Status: $status, Created At: $createdAt, Updated At: $updatedAt, Deleted At: $deletedAt';
+    return 'ID: $id, Name: $name, Email: $email, Password: $password, Status: $status, Created At: $createdAt, Updated At: $updatedAt';
   }
 }

@@ -30,7 +30,7 @@ class _EditAgentScreenState extends State<EditAgentScreen> {
   Future<void> _updateAgent() async {
     if (_formKey.currentState!.validate()) {
       try {
-        String url = 'http://127.0.0.1/api-php/edit_agent.php';
+        String url = 'http://127.0.0.1/api-php/agent_edit.php';
         var response = await _dio.post(
           url,
           data: {

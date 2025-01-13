@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tugas/models/agent_models.dart';
 import 'package:flutter_tugas/repo/agent.dart';
+import 'package:flutter_tugas/ui/agent_create.dart';
 import 'package:flutter_tugas/ui/agent_detail.dart';
 
 class UserHomepage extends StatefulWidget {
@@ -21,10 +22,16 @@ class _UserHomepageState extends State<UserHomepage> {
     futureUser = agentRepository.getAgentModels();
   }
 
-  // Method untuk memulai pencarian
   void searchAgent(String query) {
     setState(() {
       futureUser = agentRepository.getAgentModels(searchName: query);
+    });
+  }
+
+  void refreshAgents() {
+    setState(() {
+      searchController.clear();
+      futureUser = agentRepository.getAgentModels();
     });
   }
 
@@ -32,26 +39,40 @@ class _UserHomepageState extends State<UserHomepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Daftar Agent'),
-        backgroundColor: Theme.of(context).primaryColor,
+        title: const Text(
+          'Daftar Agent',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.indigo,
       ),
       body: Column(
         children: [
-          // Inputan search
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: searchController,
-              decoration: InputDecoration(
-                hintText: 'Cari agen berdasarkan nama',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
               ),
-              onChanged: (value) {
-                searchAgent(value);
-              },
+              child: TextField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  hintText: 'Cari agen berdasarkan nama',
+                  prefixIcon: const Icon(Icons.search, color: Colors.indigo),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
+                ),
+                onChanged: (value) {
+                  searchAgent(value);
+                },
+              ),
             ),
           ),
           Expanded(
@@ -68,18 +89,21 @@ class _UserHomepageState extends State<UserHomepage> {
                   final agents = snapshot.data!;
                   if (agents.isEmpty) {
                     return const Center(
-                      child: Text('Tidak ada agen ditemukan'),
+                      child: Text(
+                        'Tidak ada agen ditemukan',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
                     );
                   }
                   return ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     itemCount: agents.length,
                     itemBuilder: (context, index) {
                       AgentModel agent = agents[index];
                       return Padding(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Card(
-                          elevation: 4,
+                          elevation: 6,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -103,11 +127,15 @@ class _UserHomepageState extends State<UserHomepage> {
                             title: Text(
                               agent.name,
                               style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
                             subtitle: Text(agent.email),
-                            trailing: Icon(Icons.arrow_forward_ios,
-                                color: Colors.grey[600]),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.indigo[300],
+                            ),
                           ),
                         ),
                       );
@@ -122,6 +150,19 @@ class _UserHomepageState extends State<UserHomepage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CreateAgentPage(),
+            ),
+          );
+          refreshAgents();
+        },
+        backgroundColor: Colors.indigo,
+        child: const Icon(Icons.add),
       ),
     );
   }
